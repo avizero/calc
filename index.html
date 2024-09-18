@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Поисковые подсказки по своим данным</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=4c4b8c38-62c1-4703-bb1f-2b3a44936b6f&suggest_apikey=372c44d6-c725-4a7b-b69d-46c20df4a834" type="text/javascript"></script>
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            // Создаем выпадающую панель с поисковыми подсказками и прикрепляем ее к HTML-элементу по его id.
+            var suggestView1 = new ymaps.SuggestView('suggest1');
+
+            // Создаем карту.
+            var myMap = new ymaps.Map('map', {
+                center: [57.65329027816262, 39.93004191119759], // Линейная
+                zoom: 10
+            });
+
+            // Функция для обновления карты по введенному адресу.
+            function updateMap(address) {
+                ymaps.geocode(address).then(function (res) {
+                    var firstGeoObject = res.geoObjects.get(0);
+                    if (firstGeoObject) {
+                        myMap.geoObjects.removeAll();
+                        myMap.geoObjects.add(firstGeoObject);
+                        myMap.setCenter(firstGeoObject.geometry.getCoordinates());
+
+                        // Рассчитываем расстояние до заданной точки и отображаем маршрут
+                        var targetPoint = [57.65329027816262, 39.93004191119759];
+                        ymaps.route([firstGeoObject.geometry.getCoordinates(), targetPoint]).then(function (route) {
+                            var distance = route.getLength();
+                            document.getElementById('distance').innerText = 'Расстояние до точки: ' + distance.toFixed(2) + ' км';
+
+                            // Добавляем маршрут на карту
+                            myMap.geoObjects.add(route);
+                        }).catch(function (error) {
+                            console.error('Ошибка построения маршрута:', error);
+                            alert('Произошла ошибка при построении маршрута');
+                        });
+                    } else {
+                        alert('Адрес не найден');
+                    }
+                }).catch(function (error) {
+                    console.error('Ошибка геокодирования:', error);
+                    alert('Произошла ошибка при геокодировании адреса');
+                });
+            }
+
+            // Обработчик события для кнопки
+            document.getElementById('calculateButton').addEventListener('click', function() {
+                var address = document.getElementById('suggest1').value;
+                if (address) {
+                    updateMap(address);
+                } else {
+                    alert('Пожалуйста, введите адрес');
+                }
+            });
+        }
+    </script>
+    <style>
+        html, body {
+            position: relative;
+            width: 100%;
+            height: 95%;
+            padding: 0;
+            margin: 0;
+            font-family: Arial;
+        }
+
+        #suggest1 {
+            width: 500px;
+            margin: 5px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .header {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        #distance {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .radio-group {
+            margin-top: 10px;
+        }
+
+        .radio-group label {
+            margin-right: 15px;
+        }
+
+        #calculateButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Поисковые подсказки по своим данным</h1>
+    <p class="header">Начните вводить запрос для появления поисковой подсказки</p>
+    <input type="text" id="suggest1">
+
+    <div class="radio-group">
+        <label>
+            <input type="radio" name="material" value="песок">
+            Песок
+        </label>
+        <label>
+            <input type="radio" name="material" value="щебень">
+            Щебень
+        </label>
+        <label>
+            <input type="radio" name="material" value="торф">
+            Торф
+        </label>
+    </div>
+
+    <button id="calculateButton">Рассчитать маршрут и расстояние</button>
+
+    <div id="map"></div>
+    <p id="distance">Расстояние до точки: неизвестно</p>
+</body>
+</html>
