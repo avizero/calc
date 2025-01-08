@@ -132,14 +132,17 @@ html, body {
 
 #map {
     width: 100%;
-    height: 70vh; /* Карта занимает оставшиеся 70% высоты */
+    height: 60vh; /* Карта занимает оставшиеся 70% высоты */
 }
 
 #distance {
     text-align: center;
-    margin-top: 10px;
-    font-size: 16px;
+    margin: 10px auto; /* Центрируем и добавляем отступы */
+    font-size: 16px; /* Размер текста */
+    word-wrap: break-word; /* Перенос длинного текста */
+    max-width: 90%; /* Ограничиваем ширину на мобильных устройствах */
 }
+
 
 /* Для мобильных устройств */
 @media (max-width: 768px) {
@@ -154,6 +157,15 @@ html, body {
     .container {
         height: auto; /* Убираем фиксированную высоту для лучшей адаптации */
         margin-bottom: 20px;
+    }
+
+    #distance {
+        font-size: 14px; /* Уменьшаем размер текста */
+        margin-bottom: 20px; /* Добавляем больше пространства снизу */
+    }
+
+    #map {
+        height: 60vh; /* Уменьшаем высоту карты для высвобождения места */
     }
 }
 
