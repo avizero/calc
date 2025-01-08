@@ -94,7 +94,6 @@ function init() {
 
     </script>
     <style>
-/* Базовые стили для десктопа */
 html, body {
     position: relative;
     width: 100%;
@@ -104,91 +103,68 @@ html, body {
     font-family: Arial, sans-serif;
 }
 
-#map {
-width: 100%;
-height: calc(100vh - 30%); /* Учитываем 30% для других элементов */
+.container {
+    display: flex;
+    flex-direction: column; /* Расположение элементов по вертикали */
+    align-items: center; /* Горизонтальное центрирование */
+    justify-content: center; /* Вертикальное центрирование */
+    height: 20vh; /* Высота контейнера */
+    text-align: center; /* Центрируем текст */
+    margin-bottom: 10px;
 }
 
 #suggest1 {
-    width: 500px;
-    margin: 10px auto;
-    padding: 5px;
-    font-size: 14px;
-}
-
-.header {
+    width: 80%; /* Текстовое поле занимает 80% ширины контейнера */
+    max-width: 500px; /* Ограничиваем максимальную ширину */
     padding: 10px;
     font-size: 16px;
-    text-align: center;
+    margin: 10px 0;
+    box-sizing: border-box;
 }
 
 #calculateButton {
-    margin-top: 10px;
     padding: 10px 15px;
-    font-size: 16px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 50%; /* Кнопка занимает 50% ширины контейнера */
+    max-width: 200px; /* Ограничиваем максимальную ширину */
 }
 
-.radio-group {
-    margin-top: 10px;
-    text-align: center;
+#map {
+    width: 100%;
+    height: 70vh; /* Карта занимает оставшиеся 70% высоты */
 }
 
 #distance {
-    margin-top: 20px;
-    font-size: 16px;
     text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
 }
 
-/* Адаптивные стили для смартфонов */
+/* Для мобильных устройств */
 @media (max-width: 768px) {
     #suggest1 {
-        width: 90%; /* Поле ввода занимает 90% ширины экрана */
-        margin: 10px auto;
-        font-size: 16px;
-    }
-
-    #map {
-    width: 100%;
-    height: calc(100vh - 50%); /* Учитываем 50% для других элементов */
-    }
-
-    .header {
-        font-size: 14px;
+        width: 90%; /* Увеличиваем ширину текстового поля на мобильных устройствах */
     }
 
     #calculateButton {
-        width: 90%; /* Кнопка занимает 90% ширины экрана */
-        padding: 10px;
-        font-size: 14px;
+        width: 80%; /* Увеличиваем ширину кнопки на мобильных устройствах */
     }
 
-    .radio-group {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center; /* Центрируем радиокнопки */
-        margin-top: 10px;
-    }
-
-    .radio-group label {
-        margin: 5px 10px;
-        font-size: 14px;
-    }
-
-    #distance {
-        font-size: 14px;
+    .container {
+        height: auto; /* Убираем фиксированную высоту для лучшей адаптации */
+        margin-bottom: 20px;
     }
 }
+
 
     </style>
 </head>
 <body>
-    <p class="header">Начните вводить запрос для появления поисковой подсказки и выберите точку на карте</p>
-    <input type="text" id="suggest1">
-
-    <div class="radio-group">
+<div class="container">
+    <p class="header">Начните вводить запрос для появления поисковой подсказки</p>
+    <input type="text" id="suggest1" placeholder="Введите адрес">
+	    <div class="radio-group">
         <label>
             <input type="radio" name="material" value="песок">
             Песок
@@ -202,10 +178,9 @@ height: calc(100vh - 30%); /* Учитываем 30% для других эле�
             Торф
         </label>
     </div>
-
     <button id="calculateButton">Рассчитать маршрут и расстояние</button>
-
-    <div id="map"></div>
-    <p id="distance">Расстояние до точки: неизвестно</p>
+</div>
+<div id="map"></div>
+<p id="distance">Расстояние до точки: неизвестно</p>
 </body>
 </html>
