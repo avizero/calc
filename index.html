@@ -41,6 +41,24 @@ function init() {
         var coords = e.get('coords'); // Координаты точки клика
         var targetPoint = [57.65329027816262, 39.93004191119759]; // Фиксированная точка
 
+        // Выполняем обратное геокодирование
+        ymaps.geocode(coords).then(function (res) {
+            var firstGeoObject = res.geoObjects.get(0);
+            if (firstGeoObject) {
+                // Получаем адрес из обратного геокодирования
+                var address = firstGeoObject.getAddressLine();
+                
+                // Обновляем поле ввода адреса
+                document.getElementById('suggest1').value = address;
+            } else {
+                document.getElementById('suggest1').value = 'Адрес не найден';
+            }
+        }).catch(function (error) {
+            console.error('Ошибка обратного геокодирования:', error);
+            alert('Не удалось определить адрес по клику на карту');
+        });
+
+        // Строим маршрут и рассчитываем расстояние
         calculateRoute(targetPoint, coords);
     });
 
