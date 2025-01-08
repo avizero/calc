@@ -1,63 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Поисковые подсказки по своим данным!</title>
+    <title>Поисковые подсказки по своим данным</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=4c4b8c38-62c1-4703-bb1f-2b3a44936b6f&suggest_apikey=372c44d6-c725-4a7b-b69d-46c20df4a834" type="text/javascript"></script>
     <script>
         ymaps.ready(init);
 
-        function init() {
-            // Создаем выпадающую панель с поисковыми подсказками и прикрепляем ее к HTML-элементу по его id.
-            var suggestView1 = new ymaps.SuggestView('suggest1');
+function init() {
+    // Создаем выпадающую панель с поисковыми подсказками и прикрепляем ее к HTML-элементу по его id.
+    var suggestView1 = new ymaps.SuggestView('suggest1');
 
-            // Создаем карту.
-            var myMap = new ymaps.Map('map', {
-                center: [57.65329027816262, 39.93004191119759], // Линейная
-                zoom: 10
-            });
+    // Создаем карту.
+    var myMap = new ymaps.Map('map', {
+        center: [57.65329027816262, 39.93004191119759], // Линейная
+        zoom: 10
+    });
 
-            // Функция для обновления карты по введенному адресу.
-            function updateMap(address) {
-                ymaps.geocode(address).then(function (res) {
-                    var firstGeoObject = res.geoObjects.get(0);
-                    if (firstGeoObject) {
-                        myMap.geoObjects.removeAll();
-                        myMap.geoObjects.add(firstGeoObject);
-                        myMap.setCenter(firstGeoObject.geometry.getCoordinates());
+    // Функция для построения маршрута и обновления информации о расстоянии
+    function calculateRoute(startPoint, endPoint) {
+        ymaps.route([startPoint, endPoint]).then(function (route) {
+            var distance = route.getLength() / 1000; // перевод в километры
+            document.getElementById('distance').innerText = 'Расстояние до точки: ' + distance.toFixed(2) + ' км';
 
-                        // Рассчитываем расстояние до заданной точки и отображаем маршрут
-                        var targetPoint = [57.65329027816262, 39.93004191119759];
-                        ymaps.route([firstGeoObject.geometry.getCoordinates(), targetPoint]).then(function (route) {
-                            var distance = route.getLength();
-                            document.getElementById('distance').innerText = 'Расстояние до точки: ' + distance.toFixed(2) + ' км';
+            // Удаляем старые маршруты и добавляем новый
+            myMap.geoObjects.removeAll();
+            myMap.geoObjects.add(route);
 
-                            // Добавляем маршрут на карту
-                            myMap.geoObjects.add(route);
-                        }).catch(function (error) {
-                            console.error('Ошибка построения маршрута:', error);
-                            alert('Произошла ошибка при построении маршрута');
-                        });
-                    } else {
-                        alert('Адрес не найден');
-                    }
-                }).catch(function (error) {
-                    console.error('Ошибка геокодирования:', error);
-                    alert('Произошла ошибка при геокодировании адреса');
-                });
+            // Добавляем маркер для конечной точки
+            myMap.geoObjects.add(new ymaps.Placemark(endPoint, { balloonContent: 'Точка клика' }));
+        }).catch(function (error) {
+            console.error('Ошибка построения маршрута:', error);
+            alert('Произошла ошибка при построении маршрута');
+        });
+    }
+
+    // Обработчик кликов по карте
+    myMap.events.add('click', function (e) {
+        var coords = e.get('coords'); // Координаты точки клика
+        var targetPoint = [57.65329027816262, 39.93004191119759]; // Фиксированная точка
+
+        calculateRoute(targetPoint, coords);
+    });
+
+    // Функция для обновления карты по введенному адресу.
+    function updateMap(address) {
+        ymaps.geocode(address).then(function (res) {
+            var firstGeoObject = res.geoObjects.get(0);
+            if (firstGeoObject) {
+                var coords = firstGeoObject.geometry.getCoordinates();
+                var targetPoint = [57.65329027816262, 39.93004191119759]; // Фиксированная точка
+
+                calculateRoute(targetPoint, coords);
+            } else {
+                alert('Адрес не найден');
             }
+        }).catch(function (error) {
+            console.error('Ошибка геокодирования:', error);
+            alert('Произошла ошибка при геокодировании адреса');
+        });
+    }
 
-            // Обработчик события для кнопки
-            document.getElementById('calculateButton').addEventListener('click', function() {
-                var address = document.getElementById('suggest1').value;
-                if (address) {
-                    updateMap(address);
-                } else {
-                    alert('Пожалуйста, введите адрес');
-                }
-            });
+    // Обработчик события для кнопки
+    document.getElementById('calculateButton').addEventListener('click', function () {
+        var address = document.getElementById('suggest1').value;
+        if (address) {
+            updateMap(address);
+        } else {
+            alert('Пожалуйста, введите адрес');
         }
+    });
+}
+
     </script>
     <style>
         html, body {
@@ -108,7 +123,7 @@
     </style>
 </head>
 <body>
-    <h1>Поисковые подсказки по своим данным111</h1>
+    <h1>Поисковые подсказки по своим данным</h1>
     <p class="header">Начните вводить запрос для появления поисковой подсказки</p>
     <input type="text" id="suggest1">
 
