@@ -95,27 +95,43 @@ function init() {
     </script>
     <style>
 html, body {
-    position: relative;
-    width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Занимает всю высоту экрана */
 }
 
 .container {
+    flex-shrink: 0; /* Запрет сжатия контейнера */
     display: flex;
-    flex-direction: column; /* Расположение элементов по вертикали */
-    align-items: center; /* Горизонтальное центрирование */
-    justify-content: center; /* Вертикальное центрирование */
-    height: 20vh; /* Высота контейнера */
-    text-align: center; /* Центрируем текст */
-    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f9f9f9; /* Фон для контейнера */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Тень для разделения */
+}
+
+#map {
+    flex-grow: 1; /* Карта занимает оставшееся пространство */
+    width: 100%;
+    height: 100%; /* Высота карты */
 }
 
 #suggest1 {
-    width: 80%; /* Текстовое поле занимает 80% ширины контейнера */
-    max-width: 500px; /* Ограничиваем максимальную ширину */
+    width: 80%;
+    max-width: 500px;
     padding: 10px;
     font-size: 16px;
     margin: 10px 0;
@@ -126,73 +142,42 @@ html, body {
     padding: 10px 15px;
     font-size: 14px;
     margin-top: 10px;
-    width: 50%; /* Кнопка занимает 50% ширины контейнера */
-    max-width: 200px; /* Ограничиваем максимальную ширину */
-}
-
-#map {
-    width: 100%;
-    height: 60vh; /* Карта занимает оставшиеся 70% высоты */
+    width: 50%;
+    max-width: 200px;
 }
 
 #distance {
     text-align: center;
-    margin: 10px auto; /* Центрируем и добавляем отступы */
-    font-size: 16px; /* Размер текста */
-    word-wrap: break-word; /* Перенос длинного текста */
-    max-width: 90%; /* Ограничиваем ширину на мобильных устройствах */
+    margin: 10px auto;
+    font-size: 16px;
+    word-wrap: break-word;
+    max-width: 90%;
 }
-
-
-/* Для мобильных устройств */
-@media (max-width: 768px) {
-    #suggest1 {
-        width: 90%; /* Увеличиваем ширину текстового поля на мобильных устройствах */
-    }
-
-    #calculateButton {
-        width: 80%; /* Увеличиваем ширину кнопки на мобильных устройствах */
-    }
-
-    .container {
-        height: auto; /* Убираем фиксированную высоту для лучшей адаптации */
-        margin-bottom: 20px;
-    }
-
-    #distance {
-        font-size: 14px; /* Уменьшаем размер текста */
-        margin-bottom: 20px; /* Добавляем больше пространства снизу */
-    }
-
-    #map {
-        height: 50vh; /* Уменьшаем высоту карты для высвобождения места */
-    }
-}
-
-
     </style>
 </head>
 <body>
-<div class="container">
-    <p class="header">Начните вводить запрос для появления поисковой подсказки или выберете точуц на карте</p>
-    <input type="text" id="suggest1" placeholder="Введите адрес">
-	    <div class="radio-group">
-        <label>
-            <input type="radio" name="material" value="песок">
-            Песок
-        </label>
-        <label>
-            <input type="radio" name="material" value="щебень">
-            Щебень
-        </label>
-        <label>
-            <input type="radio" name="material" value="торф">
-            Торф
-        </label>
+<div class="page-wrapper">
+    <div class="container">
+        <p class="header">Начните вводить запрос для появления поисковой подсказки или выберете точку на карте</p>
+        <input type="text" id="suggest1" placeholder="Введите адрес">
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="material" value="песок">
+                Песок
+            </label>
+            <label>
+                <input type="radio" name="material" value="щебень">
+                Щебень
+            </label>
+            <label>
+                <input type="radio" name="material" value="торф">
+                Торф
+            </label>
+        </div>
+        <button id="calculateButton">Рассчитать маршрут и расстояние</button>
+        <p id="distance">Расстояние до точки: неизвестно</p>
     </div>
-    <button id="calculateButton">Рассчитать маршрут и расстояние</button>
+    <div id="map"></div>
 </div>
-<div id="map"></div>
-<p id="distance">Расстояние до точки: неизвестно</p>
 </body>
 </html>
