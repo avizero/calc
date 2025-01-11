@@ -6,19 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=4c4b8c38-62c1-4703-bb1f-2b3a44936b6f&suggest_apikey=372c44d6-c725-4a7b-b69d-46c20df4a834" type="text/javascript"></script>
     <script>
-        ymaps.ready(init);
+ymaps.ready(init);
 
 function init() {
     // Создаем выпадающую панель с поисковыми подсказками и прикрепляем ее к HTML-элементу по его id.
     var suggestView1 = new ymaps.SuggestView('suggest1');
 
-    // Создаем карту.
+    // Создаем карту без стандартного элемента управления.
     var myMap = new ymaps.Map('map', {
         center: [57.65329027816262, 39.93004191119759], // Линейная
-        zoom: 10
+        zoom: 10,
+        controls: [] // Отключаем все стандартные элементы управления
     });
 
-    // Функция для построения маршрута и обновления информации о расстоянии
+    // Добавляем кастомные элементы управления (масштабирование)
+    myMap.controls.add('zoomControl', {
+        position: { top: 10, right: 10 }
+    });
+
     function calculateRoute(startPoint, endPoint) {
         ymaps.route([startPoint, endPoint]).then(function (route) {
             var distance = route.getLength() / 1000; // перевод в километры
@@ -90,7 +95,6 @@ function init() {
         }
     });
 }
-
 
     </script>
     <style>
